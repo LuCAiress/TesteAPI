@@ -1,8 +1,11 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from pydantic import BaseModel, EmailStr
 import boto3
 import json
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 class Pedido(BaseModel):
     email: EmailStr       # força ser email válido
@@ -11,8 +14,21 @@ class Pedido(BaseModel):
 
 app = FastAPI()
 
-s3_client = boto3.client("s3")
-BUCKET_NAME = "pedido-novo-empresa"
+# AWS Credentials
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+BUCKET_NAME = os.getenv("BUCKET_NAME")
+
+# Configure S3 client with credentials
+s3_client = boto3.client(
+    "s3",
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    aws_session_token=AWS_SESSION_TOKEN
+)
+
+
 
 @app.post("/pedido")
 async def salvar_pedido(pedido: Pedido):
