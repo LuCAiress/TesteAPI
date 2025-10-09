@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 import boto3
 import json
@@ -28,7 +29,13 @@ s3_client = boto3.client(
     aws_session_token=AWS_SESSION_TOKEN
 )
 
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # permite todos os métodos: GET, POST, OPTIONS, etc.
+    allow_headers=["*"],  # permite todos os headers
+)
 
 @app.post("/pedido")
 async def salvar_pedido(pedido: Pedido):
