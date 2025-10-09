@@ -29,6 +29,10 @@ s3_client = boto3.client(
     aws_session_token=AWS_SESSION_TOKEN
 )
 
+origins = [
+    "*"
+]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
